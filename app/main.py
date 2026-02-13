@@ -12,6 +12,8 @@ from app.api.v1 import (
     bookings,
     services,
     forms,
+    form_builder,
+    public_forms,
     inventory,
     integrations,
     alerts,
@@ -35,11 +37,12 @@ app = FastAPI(
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
+    allow_origins=settings.cors_origins_list,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # Exception handlers
 @app.exception_handler(UnauthorizedException)
@@ -83,7 +86,9 @@ app.include_router(contacts.router, prefix="/api/v1/contacts", tags=["contacts"]
 app.include_router(conversations.router, prefix="/api/v1/conversations", tags=["conversations"])
 app.include_router(bookings.router, prefix="/api/v1/bookings", tags=["bookings"])
 app.include_router(services.router, prefix="/api/v1/services", tags=["services"])
-app.include_router(forms.router, prefix="/api/v1/forms", tags=["forms"])
+app.include_router(forms.router, prefix="/api/v1/forms", tags=["forms-legacy"])  # Legacy document forms
+app.include_router(form_builder.router, prefix="/api/v1/form-builder", tags=["form-builder"])  # New form builder
+app.include_router(public_forms.router, prefix="/api/public", tags=["public-forms"])  # Public form submissions
 app.include_router(inventory.router, prefix="/api/v1/inventory", tags=["inventory"])
 app.include_router(integrations.router, prefix="/api/v1/integrations", tags=["integrations"])
 app.include_router(alerts.router, prefix="/api/v1/alerts", tags=["alerts"])
