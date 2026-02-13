@@ -14,7 +14,7 @@ class AuthService:
     def __init__(self, db: Session):
         self.db = db
 
-    async def register_user(self, db: Session, user_data: UserRegister) -> Token:
+    def register_user(self, db: Session, user_data: UserRegister) -> Token:
         """Register new business owner with workspace"""
         
         # Validate email
@@ -78,7 +78,7 @@ class AuthService:
             db.rollback()
             raise ValidationException(f"Registration failed: {str(e)}")
     
-    async def authenticate_user(self, db: Session, user_data: UserLogin) -> Token:
+    def authenticate_user(self, db: Session, user_data: UserLogin) -> Token:
         """Authenticate user and return token"""
         
         user = db.query(User).filter(User.email == user_data.email).first()
@@ -94,7 +94,7 @@ class AuthService:
         
         return Token(access_token=access_token, token_type="bearer")
     
-    async def refresh_token(self, db: Session, user: User) -> Token:
+    def refresh_token(self, db: Session, user: User) -> Token:
         """Refresh access token"""
         
         if not user or not user.is_active:
@@ -103,16 +103,4 @@ class AuthService:
         # Create new access token
         access_token = create_access_token(data={"sub": str(user.id)})
         
-        return Token(access_token=access_token, token_type="bearer")
-    
-    def authenticate_user(self, email: str, password: str) -> Optional[Token]:
-        """Authenticate user and return token"""
-        user = self.db.query(User).filter(User.email == email).first()
-        if not user or not verify_password(password, user.hashed_password):
-            return None
-
-        access_token_expires = timedelta(minutes=30)
-        access_token = create_access_token(
-            data={"sub": user.email}, expires_delta=access_token_expires
-        )
         return Token(access_token=access_token, token_type="bearer")

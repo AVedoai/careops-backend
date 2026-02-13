@@ -143,6 +143,3 @@ class Lead(Base):
     workspace = relationship("Workspace")
     form_submission = relationship("CustomFormSubmission", back_populates="lead")
     assigned_user = relationship("User", foreign_keys=[assigned_to])
-    
-    # Relationships
-    booking = relationship("Booking", back_populates="form_submissions")
