@@ -56,6 +56,7 @@ class Form(Base):
     creator = relationship("User", foreign_keys=[created_by])
     service_forms = relationship("ServiceForm", back_populates="form", cascade="all, delete-orphan")
     custom_submissions = relationship("CustomFormSubmission", back_populates="form", cascade="all, delete-orphan")
+    form_submissions = relationship("FormSubmission", back_populates="form", cascade="all, delete-orphan")
 
 class ServiceForm(Base):
     """Links forms to services (many-to-many)"""
@@ -86,6 +87,10 @@ class FormSubmission(Base):
     reminder_sent_at = Column(DateTime, nullable=True)
     
     created_at = Column(DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    booking = relationship("Booking", back_populates="form_submissions")
+    form = relationship("Form", back_populates="form_submissions")
 
 class CustomFormSubmission(Base):
     """Submissions for custom form builder forms"""

@@ -73,6 +73,16 @@ async def validation_handler(request, exc):
         content={"detail": str(exc)}
     )
 
+# Root endpoint
+@app.get("/")
+async def root():
+    return {
+        "message": "CareOps API", 
+        "version": "1.0.0",
+        "docs": "/docs",
+        "status": "running"
+    }
+
 # Health check
 @app.get("/health")
 async def health_check():
