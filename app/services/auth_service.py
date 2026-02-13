@@ -21,6 +21,13 @@ class AuthService:
         if not validate_email(user_data.email):
             raise ValidationException("Invalid email format")
         
+        # Validate password length for bcrypt compatibility
+        if len(user_data.password.encode('utf-8')) > 72:
+            raise ValidationException("Password is too long. Maximum length is 72 bytes.")
+        
+        if len(user_data.password) < 6:
+            raise ValidationException("Password must be at least 6 characters long.")
+        
         # Check if user already exists
         existing_user = db.query(User).filter(User.email == user_data.email).first()
         if existing_user:
